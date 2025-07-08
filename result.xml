@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="EDI" tests="7" time="1.994">
+  <testsuite name="SubmitEDI" id="fe53712c-17f1-4d7d-897e-7ba731666488" timestamp="2025-07-08T12:45:13.075Z" tests="5" failures="0" errors="0" time="0.356">
+    <testcase name="Response status code is 200" time="0.356" classname="SubmitEdi"/>
+    <testcase name="Response status is Processeeed" time="0.356" classname="SubmitEdi"/>
+    <testcase name="Response has required fields" time="0.356" classname="SubmitEdi"/>
+    <testcase name="The status field must be a non-empty string" time="0.356" classname="SubmitEdi"/>
+    <testcase name="The messageId should be in a valid UUID format" time="0.356" classname="SubmitEdi"/>
+  </testsuite>
+  <testsuite name="Message" id="3d7ae588-64b3-41bc-bd5d-3c49e16e7cfb" timestamp="2025-07-08T12:45:13.075Z" tests="5" failures="0" errors="0" time="0.109">
+    <testcase name="Response status code is 200" time="0.109" classname="Message"/>
+    <testcase name="Status is PROCESSED" time="0.109" classname="Message"/>
+    <testcase name="Response has the required fields" time="0.109" classname="Message"/>
+    <testcase name="Validate that errorList is an array" time="0.109" classname="Message"/>
+    <testcase name="Company Tax ID must be a non-empty string if present" time="0.109" classname="Message"/>
+  </testsuite>
+  <testsuite name="SubmitEDI_Rejected" id="242e47d2-9bce-4849-b324-3ec4d2e6d677" timestamp="2025-07-08T12:45:13.075Z" tests="5" failures="0" errors="0" time="0.299">
+    <testcase name="Response status code is 422" time="0.299" classname="SubmitEdiRejected"/>
+    <testcase name="Response status is Processeeed" time="0.299" classname="SubmitEdiRejected"/>
+    <testcase name="Response has required fields" time="0.299" classname="SubmitEdiRejected"/>
+    <testcase name="The status field must be a non-empty string" time="0.299" classname="SubmitEdiRejected"/>
+    <testcase name="The messageId should be in a valid UUID format" time="0.299" classname="SubmitEdiRejected"/>
+  </testsuite>
+  <testsuite name="Validations_WaybillReferenceisrequired" id="a7ddb0a4-4574-4530-a11d-0ea34be7348b" timestamp="2025-07-08T12:45:13.075Z" tests="7" failures="0" errors="0" time="0.107">
+    <testcase name="Response status code is 200" time="0.107" classname="ValidationsWaybillReferenceisrequired"/>
+    <testcase name="Status is REJECTED" time="0.107" classname="ValidationsWaybillReferenceisrequired"/>
+    <testcase name="Error list is not empty" time="0.107" classname="ValidationsWaybillReferenceisrequired"/>
+    <testcase name="Detail message matches expected error {Validation Error: $.reference: Waybill Reference is required}" time="0.107" classname="ValidationsWaybillReferenceisrequired"/>
+    <testcase name="Response has the required fields" time="0.107" classname="ValidationsWaybillReferenceisrequired"/>
+    <testcase name="Validate the structure of the errorList array" time="0.107" classname="ValidationsWaybillReferenceisrequired"/>
+    <testcase name="Each error in the errorList contains the required fields - code, message, and detail" time="0.107" classname="ValidationsWaybillReferenceisrequired"/>
+  </testsuite>
+  <testsuite name="Validations_PlaceOfLoadingisrequired" id="08ccb8fa-b8cd-4096-aed2-8986bf4c0a7d" timestamp="2025-07-08T12:45:13.075Z" tests="7" failures="0" errors="0" time="0.108">
+    <testcase name="Response status code is 200" time="0.108" classname="ValidationsPlaceOfLoadingisrequired"/>
+    <testcase name="Status is REJECTED" time="0.108" classname="ValidationsPlaceOfLoadingisrequired"/>
+    <testcase name="Error list is not empty" time="0.108" classname="ValidationsPlaceOfLoadingisrequired"/>
+    <testcase name="Detail message matches expected error {Validation Error: $.reference: Waybill Reference is required}" time="0.108" classname="ValidationsPlaceOfLoadingisrequired"/>
+    <testcase name="Response has the required fields" time="0.108" classname="ValidationsPlaceOfLoadingisrequired"/>
+    <testcase name="Validate the structure of the errorList array" time="0.108" classname="ValidationsPlaceOfLoadingisrequired"/>
+    <testcase name="Each error in the errorList contains the required fields - code, message, and detail" time="0.108" classname="ValidationsPlaceOfLoadingisrequired"/>
+  </testsuite>
+  <testsuite name="Validations_checkGrossweight" id="aae43279-5f75-48a5-a4b9-51a8a5a01eb4" timestamp="2025-07-08T12:45:13.075Z" tests="7" failures="0" errors="0" time="0.114">
+    <testcase name="Response status code is 200" time="0.114" classname="ValidationsCheckGrossweight"/>
+    <testcase name="Status is REJECTED" time="0.114" classname="ValidationsCheckGrossweight"/>
+    <testcase name="Error list is not empty" time="0.114" classname="ValidationsCheckGrossweight"/>
+    <testcase name="Detail message matches expected error {Validation Error: Manifested Packages must be greater than 0}" time="0.114" classname="ValidationsCheckGrossweight"/>
+    <testcase name="Response has the required fields" time="0.114" classname="ValidationsCheckGrossweight"/>
+    <testcase name="Validate the structure of the errorList array" time="0.114" classname="ValidationsCheckGrossweight"/>
+    <testcase name="Each error in the errorList contains the required fields - code, message, and detail" time="0.114" classname="ValidationsCheckGrossweight"/>
+  </testsuite>
+  <testsuite name="Validations_checkVoyage" id="d09c5849-cd57-4e5c-95a1-1cdbe953ad06" timestamp="2025-07-08T12:45:13.075Z" tests="7" failures="0" errors="0" time="0.108">
+    <testcase name="Response status code is 200" time="0.108" classname="ValidationsCheckVoyage"/>
+    <testcase name="Status is REJECTED" time="0.108" classname="ValidationsCheckVoyage"/>
+    <testcase name="Error list is not empty" time="0.108" classname="ValidationsCheckVoyage"/>
+    <testcase name="Detail message matches expected error {Validation Error: $.generalSegment.voyageNumber: Voyage Number is required}" time="0.108" classname="ValidationsCheckVoyage"/>
+    <testcase name="Response has the required fields" time="0.108" classname="ValidationsCheckVoyage"/>
+    <testcase name="Validate the structure of the errorList array" time="0.108" classname="ValidationsCheckVoyage"/>
+    <testcase name="Each error in the errorList contains the required fields - code, message, and detail" time="0.108" classname="ValidationsCheckVoyage"/>
+  </testsuite>
+</testsuites>

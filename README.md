@@ -19,9 +19,6 @@ Make sure you have [Postman](https://www.postman.com/) and [Newman](https://www.
 ```bash
 npm install -g newman
 Run the Collection with Environment
-bash
-Copy
-Edit
 newman run EDI.postman_collection.json -e BVDEV.postman_environment.json --reporters cli,junit --reporter-junit-export result.xml
 🧪 Sample CI/CD Integration (Newman + Allure)
 You can integrate this collection into CI/CD pipelines using:
@@ -33,10 +30,6 @@ Jenkins with Newman + Allure
 Docker containers
 
 Example:
-
-bash
-Copy
-Edit
 newman run EDI.postman_collection.json \
   -e BVDEV.postman_environment.json \
   --reporters cli,junit,allure \

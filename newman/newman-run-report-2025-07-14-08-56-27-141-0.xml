@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="BV_Manifest" tests="6" time="4.198">
+  <testsuite name="Manifest_aMasterBilDev" id="247b4ecf-da00-4cb2-aa5b-2a59e740438f" timestamp="2025-07-14T08:56:22.679Z" tests="4" failures="0" errors="0" time="0.291">
+    <testcase name="Responsestatus code is 200" time="0.291" classname="ManifestAMasterBilDev"/>
+    <testcase name=" Response wayBillsid is not null" time="0.291" classname="ManifestAMasterBilDev"/>
+    <testcase name="Verify Master Bill Reference" time="0.291" classname="ManifestAMasterBilDev"/>
+    <testcase name="Response contains expected fields (wayBills)" time="0.291" classname="ManifestAMasterBilDev"/>
+  </testsuite>
+  <testsuite name="PublishMasterBiiDev" id="5ab2d4fb-76a4-4165-9a58-16e16acb205a" timestamp="2025-07-14T08:56:22.679Z" tests="4" failures="0" errors="0" time="0.334">
+    <testcase name="Response status code is 200" time="0.334" classname="PublishMasterBiiDev"/>
+    <testcase name="Success field is a boolean" time="0.334" classname="PublishMasterBiiDev"/>
+    <testcase name="Data field must be an object" time="0.334" classname="PublishMasterBiiDev"/>
+    <testcase name="Waybill and GeneralSegment fields are either null or of the expected type" time="0.334" classname="PublishMasterBiiDev"/>
+  </testsuite>
+  <testsuite name="CreateHBLFirst_MasterBiiDev" id="8d2f7a3c-0df2-4439-8061-d739922de611" timestamp="2025-07-14T08:56:22.679Z" tests="5" failures="0" errors="0" time="0.255">
+    <testcase name="Responsestatus code is 200" time="0.255" classname="CreateHblFirstMasterBiiDev"/>
+    <testcase name="Response wayBillsid is not null" time="0.255" classname="CreateHblFirstMasterBiiDev"/>
+    <testcase name="Verify MasterBill Reference" time="0.255" classname="CreateHblFirstMasterBiiDev"/>
+    <testcase name="Verify HousebillBill Reference" time="0.255" classname="CreateHblFirstMasterBiiDev"/>
+    <testcase name="Response contains expected fields (Housebill)" time="0.255" classname="CreateHblFirstMasterBiiDev"/>
+  </testsuite>
+  <testsuite name="CreateHBLSecond_MasterBiiDev" id="847629c8-ea41-404e-a0aa-b4c41097b797" timestamp="2025-07-14T08:56:22.679Z" tests="5" failures="0" errors="0" time="0.239">
+    <testcase name="Responsestatus code is 200" time="0.239" classname="CreateHblSecondMasterBiiDev"/>
+    <testcase name="Response wayBillsid is not null" time="0.239" classname="CreateHblSecondMasterBiiDev"/>
+    <testcase name="Verify MasterBill Reference" time="0.239" classname="CreateHblSecondMasterBiiDev"/>
+    <testcase name="Verify HousebillBill Reference" time="0.239" classname="CreateHblSecondMasterBiiDev"/>
+    <testcase name="Response contains expected fields (Housebill)" time="0.239" classname="CreateHblSecondMasterBiiDev"/>
+  </testsuite>
+  <testsuite name="PublishHouseBillDev" id="c602b81c-a21c-4082-915c-aac1a6c4da68" timestamp="2025-07-14T08:56:22.679Z" tests="3" failures="0" errors="0" time="0.409">
+    <testcase name="Response status code is 200" time="0.409" classname="PublishHouseBillDev"/>
+    <testcase name="Success field is true" time="0.409" classname="PublishHouseBillDev"/>
+    <testcase name="Waybill and generalSegment are either null or have the expected structure" time="0.409" classname="PublishHouseBillDev"/>
+  </testsuite>
+  <testsuite name="SubmitManifestDev" id="f996d6ad-ef5a-48cf-81bf-d0368c29b75a" timestamp="2025-07-14T08:56:22.679Z" tests="4" failures="0" errors="0" time="0.738">
+    <testcase name="Response status code is 200" time="0.738" classname="SubmitManifestDev"/>
+    <testcase name="Success field should be true" time="0.738" classname="SubmitManifestDev"/>
+    <testcase name="The data object contains the required fields in generalSegment" time="0.738" classname="SubmitManifestDev"/>
+    <testcase name="WayBills array is present and contains at least one element" time="0.738" classname="SubmitManifestDev"/>
+  </testsuite>
+</testsuites>

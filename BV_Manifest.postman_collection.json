@@ -1,0 +1,732 @@
+{
+	"info": {
+		"_postman_id": "168f1d38-020b-4a2e-b79c-1ddb9a6b123b",
+		"name": "BV_Manifest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5028081",
+		"_collection_link": "https://gold-water-3014.postman.co/workspace/My-Workspace~94bdcccb-b1e9-44a7-84db-0990b4b1f82f/collection/5028081-168f1d38-020b-4a2e-b79c-1ddb9a6b123b?action=share&source=collection_link&creator=5028081"
+	},
+	"item": [
+		{
+			"name": "Manifest_aMasterBilDev",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//Random\r",
+							"function makeid(length) {\r",
+							"  var result           = '';\r",
+							"  var characters       = '0123456789';\r",
+							"  var charactersLength = characters.length;\r",
+							"  for ( var i = 0; i < length; i++ ) {\r",
+							"      result += characters.charAt(Math.floor(Math.random() * charactersLength));\r",
+							"  }\r",
+							"  return result;\r",
+							"}\r",
+							"\r",
+							"const getDate=()=>{\r",
+							"  var today = new Date();\r",
+							"  var date = String(today.getDate()).padStart(2, '0').padStart(2, '0') + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + today.getFullYear();\r",
+							"  return date\r",
+							"}\r",
+							"var day =getDate()\r",
+							"\r",
+							"var myJSON = {\"RegistrationNumberOfTransporter\":makeid(7), \"VesselName\":\"H\"+makeid(7), \"VoyageNumber\":makeid(7),\"MasterBill\":\"MBL2004_\"+makeid(7),\"MasterBill1\":\"Bill\"+makeid(7)};\r",
+							"pm.environment.set(\"RegistrationNumberOfTransporter\", myJSON.RegistrationNumberOfTransporter);\r",
+							"pm.environment.set(\"VesselName\", myJSON.VesselName);\r",
+							"pm.environment.set(\"VoyageNumber\", myJSON.VoyageNumber);\r",
+							"pm.environment.set(\"MasterBill\", myJSON.MasterBill);\r",
+							"pm.environment.set(\"MasterBill1\", myJSON.MasterBill1);\r",
+							"\r",
+							"const evn = pm.variables.get(\"evn\");\r",
+							"const realms = pm.variables.get(\"realms\");\r",
+							"pm.sendRequest({\r",
+							"      url: `${evn}/apps/keycloak/realms/${realms}/protocol/openid-connect/token`,\r",
+							"      method: 'POST',\r",
+							"       header: {\r",
+							"    'Content-Type': 'application/x-www-form-urlencoded',\r",
+							"  },\r",
+							"      body: {\r",
+							"          mode: 'urlencoded',\r",
+							"          urlencoded: [\r",
+							"            {key: \"grant_type\", value: \"password\"},\r",
+							"            {key: \"client_id\", value: \"BV_SWAGGER_UI\"},\r",
+							"            {key: \"username\", value: \"da.hua.officer@yopmail.com\"},\r",
+							"            {key: \"password\", value: \"@Ttek1234\"},\r",
+							"        ]\r",
+							"      }\r",
+							"  }, \r",
+							"  function (err, response) {\r",
+							"    console.log(\"token\",response.json().access_token);\r",
+							"        pm.environment.set(\"tokencarrier\", response.json().access_token);\r",
+							"  });\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var wayBills=pm.response.json();\r",
+							"console.log (\"test\", wayBills)\r",
+							"if(wayBills)\r",
+							"{\r",
+							"   pm.environment.set(\"wayBillsid\", wayBills.data.wayBills[0].id);\r",
+							"   pm.environment.set(\"Manifestid\", wayBills.data.generalSegment.id);\r",
+							"}\r",
+							"pm.test(\"Responsestatus code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);        \r",
+							"});\r",
+							"pm.test(\" Response wayBillsid is not null\", function () {\r",
+							"    pm.expect(pm.environment.get(\"wayBillsid\")).to.not.be.null;\r",
+							"});\r",
+							"pm.test(\"Verify Master Bill Reference\", function()\r",
+							"{\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.wayBills[0].reference).to.equal(pm.environment.get(\"MasterBill\"));\r",
+							"})\r",
+							"pm.test(\"Response contains expected fields (wayBills)\", function()     \r",
+							"{\r",
+							"   var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.wayBills[0]).to.have.property('id');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokencarrier}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"generalSegment\": {\r\n        \"status\": \"DRAFT\",\r\n        \"acquittanceStatus\": null,\r\n        \"type\": \"933\",\r\n        \"requestType\": \"SUBMISSION\",\r\n        \"registrationNumber\": null,\r\n        \"customsOfficeCode\": \"GHABK\",\r\n        \"voyageNumber\": \"{{VoyageNumber}}\",\r\n        \"departureDate\": \"2024-10-02T17:00:00Z\",\r\n        \"arrivalDate\": \"2024-10-02T17:00:00Z\",\r\n        \"arrivalTime\": \"00:00:00\",\r\n        \"lastDischargeDate\": \"2024-10-02T17:00:00Z\",\r\n        \"submittedDate\": null,\r\n        \"departurePlaceCode\": \"SAJED\",\r\n        \"dischargePlaceCode\": \"GHABK\",\r\n        \"carrier\": \"44440001\",\r\n        \"shippingAgent\": \"44440001\",\r\n        \"transportModeCode\": \"1\",\r\n        \"transporterIdentity\": \"HN001\",\r\n        \"transporterNationalityCode\": \"AD\",\r\n        \"transporterPlaceCode\": \"SAJED\",\r\n        \"transporterRegistrationNumber\": \"{{RegistrationNumberOfTransporter}}\",\r\n        \"transporterRegistrationDate\": null,\r\n        \"masterInformation\": \"HN001\",\r\n        \"tonnageNetWeight\": 9000,\r\n        \"tonnageGrossWeight\": 10000,\r\n        \"totalBillsNumber\": 1,\r\n        \"totalDeconsolidatedBillsNumber\": 0,\r\n        \"totalPackagesNumber\": 10000,\r\n        \"totalGrossWeight\": 10000,\r\n        \"manifestReqActionResponses\": null,\r\n        \"reasons\": null,\r\n        \"rejectReasons\": null,\r\n        \"additionalInformation\": null,\r\n        \"applyTo\": null,\r\n        \"inquiries\": null,\r\n        \"allocations\": null,\r\n        \"attachments\": [],\r\n        \"carrierName\": \"Da Hua\",\r\n        \"carrierAddress\": \"Saudi Arabia, Riyadh, 70965, SA\",\r\n        \"currentVersion\": null,\r\n        \"shippingAgentName\": \"Da Hua\",\r\n        \"canPreArrivalNotice\": false,\r\n        \"shippingAgentAddress\": \"Saudi Arabia, Riyadh, 70965, SA\"\r\n    },\r\n    \"wayBills\": [\r\n        {\r\n            \"status\": \"DRAFT\",\r\n            \"acquittanceStatus\": null,\r\n            \"typeCode\": \"MBL\",\r\n            \"natureCode\": \"23\",\r\n            \"reference\": \"{{MasterBill}}\",\r\n            \"masterReference\": null,\r\n            \"uniqueCarrierReference\": null,\r\n            \"loadingPlaceCode\": \"SAJED\",\r\n            \"unloadingPlaceCode\": \"GHABK\",\r\n            \"destinationPlaceCode\": null,\r\n            \"consignor\": \"90184561\",\r\n            \"consignee\": \"90184561\",\r\n            \"freightForwarder\": \"90184561\",\r\n            \"creator\": \"44440001\",\r\n            \"packageCode\": \"1A\",\r\n            \"packagesNumber\": 10000,\r\n            \"loadedPackages\": 0,\r\n            \"grossWeight\": 10000,\r\n            \"volumeCBM\": 0,\r\n            \"shippingMarks\": \"HH\",\r\n            \"locationCode\": null,\r\n            \"remainingPackages\": 10000,\r\n            \"remainingGrossWeight\": 10000,\r\n            \"deconsolidatedBillsNumber\": 0,\r\n            \"totalContainersNumber\": 1,\r\n            \"currencyCode\": \"AFN\",\r\n            \"freightCurrencyCode\": \"AFN\",\r\n            \"insuranceCurrencyCode\": \"AFN\",\r\n            \"freightAmount\": 2000,\r\n            \"customsValue\": 2000,\r\n            \"insuranceValue\": 2000,\r\n            \"carrier\": \"44440001\",\r\n            \"houseBills\": [],\r\n            \"goodsDescription\": \"rice\",\r\n            \"pcIndicator\": \"PP\",\r\n            \"applyToId\": null,\r\n            \"requests\": null,\r\n            \"firstLevel\": true,\r\n            \"containers\": [\r\n                {\r\n                    \"typeCode\": \"08GP\",\r\n                    \"loadedCode\": \"1\",\r\n                    \"packagesNumber\": 10000,\r\n                    \"reference\": \"HP000004\",\r\n                    \"sealingParty\": \"88\",\r\n                    \"tareWeight\": 5000,\r\n                    \"grossWeight\": 10000,\r\n                    \"netWeight\": null,\r\n                    \"netWeightUOMCode\": null,\r\n                    \"hazardousGoodsCode\": null,\r\n                    \"goodsStatusCode\": null,\r\n                    \"goodsDescription\": null,\r\n                    \"loadedPackages\": null,\r\n                    \"seals\": [\r\n                        \"5555\"\r\n                    ],\r\n                    \"hasValidReference\": false\r\n                }\r\n            ],\r\n            \"splits\": [],\r\n            \"waybillReqActions\": null,\r\n            \"treeId\": \"qia6w\",\r\n            \"notifyCode\": \"90184561\",\r\n            \"notifyName\": \"Atlas World Logistics\",\r\n            \"arrivalDate\": \"2024-10-02T17:00:00Z\",\r\n            \"carrierName\": \"Da Hua\",\r\n            \"voyageNumber\": \"{{VoyageNumber}}\",\r\n            \"consigneeName\": \"Atlas World Logistics\",\r\n            \"consignorName\": \"Atlas World Logistics\",\r\n            \"departureDate\": \"2024-10-02T17:00:00Z\",\r\n            \"notifyAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\",\r\n            \"consigneeAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\",\r\n            \"consignorAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\",\r\n            \"customsOfficeCode\": \"GHABK\",\r\n            \"departurePlaceCode\": \"SAJED\",\r\n            \"dischargePlaceCode\": \"GHABK\",\r\n            \"registrationNumber\": null,\r\n            \"transporterIdentity\": \"HN001\",\r\n            \"freightForwarderName\": \"Atlas World Logistics\",\r\n            \"freightForwarderAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\"\r\n        }\r\n    ],\r\n    \"currentVersion\": null,\r\n    \"attachments\": []\r\n}"
+				},
+				"url": {
+					"raw": "{{evn}}/api/gateway/v1/manifest/manifests",
+					"host": [
+						"{{evn}}"
+					],
+					"path": [
+						"api",
+						"gateway",
+						"v1",
+						"manifest",
+						"manifests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PublishMasterBiiDev",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.eql(200);",
+							"});",
+							"",
+							"pm.test(\"Success field is a boolean\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.have.property('success').that.is.a('boolean');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Data field must be an object\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.data).to.be.an('object');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Waybill and GeneralSegment fields are either null or of the expected type\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.data).to.be.an('object');",
+							"    ",
+							"    // Check waybill",
+							"    pm.expect(responseData.data.waybill).to.satisfy(value => value === null || typeof value === 'string', \"Waybill should be null or a string\");",
+							"    ",
+							"    // Check generalSegment",
+							"    pm.expect(responseData.data.generalSegment).to.satisfy(value => value === null || typeof value === 'object', \"GeneralSegment should be null or an object\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokencarrier}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"masterBillIds\":[\"{{wayBillsid}}\"]}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{evn}}/api/gateway/v1/manifest/waybills/masterbill/publicize",
+					"host": [
+						"{{evn}}"
+					],
+					"path": [
+						"api",
+						"gateway",
+						"v1",
+						"manifest",
+						"waybills",
+						"masterbill",
+						"publicize"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateHBLFirst_MasterBiiDev",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//Random\r",
+							"function makeid(length) {\r",
+							"  var result           = '';\r",
+							"  var characters       = '0123456789';\r",
+							"  var charactersLength = characters.length;\r",
+							"  for ( var i = 0; i < length; i++ ) {\r",
+							"      result += characters.charAt(Math.floor(Math.random() * charactersLength));\r",
+							"  }\r",
+							"  return result;\r",
+							"}\r",
+							"\r",
+							"var Hbill = \"HB2025_\"+makeid(7);\r",
+							"pm.environment.set(\"Hbill\", Hbill);\r",
+							"const evn = pm.variables.get(\"evn\");\r",
+							"const realms = pm.variables.get(\"realms\");\r",
+							"pm.sendRequest({\r",
+							"      url: `${evn}/apps/keycloak/realms/${realms}/protocol/openid-connect/token`,\r",
+							"      method: 'POST',\r",
+							"       header: {\r",
+							"    'Content-Type': 'application/x-www-form-urlencoded',\r",
+							"  },\r",
+							"      body: {\r",
+							"          mode: 'urlencoded',\r",
+							"          urlencoded: [\r",
+							"            {key: \"grant_type\", value: \"password\"},\r",
+							"            {key: \"client_id\", value: \"BV_SWAGGER_UI\"},\r",
+							"            {key: \"username\", value: \"atlas.officer@yopmail.com\"},\r",
+							"            {key: \"password\", value: \"@Ttek1234\"},\r",
+							"        ]\r",
+							"      }\r",
+							"  }, \r",
+							"  function (err, response) {\r",
+							"    console.log(\"token\",response.json().access_token);\r",
+							"        pm.environment.set(\"tokenIMEX\", response.json().access_token);\r",
+							"  })"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var HouseBillid = pm.response.json();\r",
+							"console.log(\"test\", HouseBillid);\r",
+							"if (HouseBillid) {\r",
+							"    pm.environment.set(\"HouseBillid\", HouseBillid.data.waybill.id);\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Responsestatus code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Response wayBillsid is not null\", function () {\r",
+							"    pm.expect(pm.environment.get(\"wayBillsid\")).to.not.be.null;\r",
+							"});\r",
+							"pm.test(\"Verify MasterBill Reference\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.waybill.masterReference).to.exist.and.to.equal(pm.environment.get(\"MasterBill\"));\r",
+							"});\r",
+							"pm.test(\"Verify HousebillBill Reference\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.waybill.reference).to.equal(pm.environment.get(\"Hbill\"));\r",
+							"});\r",
+							"pm.test(\"Response contains expected fields (Housebill)\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.waybill).to.have.property('id');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenIMEX}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"DRAFT\",\r\n    \"acquittanceStatus\": null,\r\n    \"typeCode\": \"HBL\",\r\n    \"natureCode\": \"23\",\r\n    \"reference\": \"{{Hbill}}\",\r\n    \"masterReference\": \"{{MasterBill}}\",\r\n    \"uniqueCarrierReference\": null,\r\n    \"loadingPlaceCode\": \"SAJED\",\r\n    \"unloadingPlaceCode\": \"GHABK\",\r\n    \"destinationPlaceCode\": null,\r\n    \"consignor\": \"90184561\",\r\n    \"consignee\": \"90184561\",\r\n    \"freightForwarder\": \"90184561\",\r\n    \"creator\": \"90184561\",\r\n    \"createdBy\": \"85dc606f-a8e0-4a06-ad8e-e84bc612e991\",\r\n    \"packageCode\": \"1A\",\r\n    \"packagesNumber\": 5000,\r\n    \"loadedPackages\": 0,\r\n    \"grossWeight\": 5000,\r\n    \"volumeCBM\": 100,\r\n    \"shippingMarks\": \"HH\",\r\n    \"locationCode\": \"114466CCA\",\r\n    \"goodsDescription\": \"rice\",\r\n    \"remainingPackages\": 5000,\r\n    \"remainingGrossWeight\": 5000,\r\n    \"deconsolidatedBillsNumber\": 0,\r\n    \"totalContainersNumber\": 1,\r\n    \"currencyCode\": \"AFN\",\r\n    \"freightCurrencyCode\": \"AFN\",\r\n    \"insuranceCurrencyCode\": \"AFN\",\r\n    \"freightAmount\": 1000,\r\n    \"customsValue\": 1000,\r\n    \"insuranceValue\": 1000,\r\n    \"containers\": [\r\n        {\r\n\r\n            \"typeCode\": \"08GP\",\r\n            \"loadedCode\": \"1\",\r\n            \"packagesNumber\": 5000,\r\n            \"reference\": \"HP000004\",\r\n            \"sealingParty\": \"88\",\r\n            \"tareWeight\": 5000,\r\n            \"grossWeight\": 5000,\r\n            \"netWeight\": null,\r\n            \"netWeightUOMCode\": null,\r\n            \"hazardousGoodsCode\": null,\r\n            \"goodsStatusCode\": null,\r\n            \"goodsDescription\": null,\r\n            \"loadedPackages\": null,\r\n            \"seals\": [\r\n                \"5555\"\r\n            ],\r\n            \"hasValidReference\": false\r\n        }\r\n    ],\r\n    \"splits\": [\r\n        {\r\n           \r\n            \"applyTo\": null,\r\n            \"status\": null,\r\n            \"containerReferences\": [\r\n                {\r\n                    \"reference\": \"HP000004\",\r\n                    \"grossWeight\": 2500,\r\n                    \"packagesNumber\": 2500\r\n                }\r\n            ],\r\n            \"packageCode\": \"1A\",\r\n            \"packagesNumber\": 2500,\r\n            \"grossWeight\": 2500,\r\n            \"goodsDescription\": \"rice\",\r\n            \"remainingGrossWeight\": 2500,\r\n            \"remainingPackages\": 2500,\r\n            \"createdDate\": null,\r\n            \"sequence\": 1\r\n        },\r\n        {\r\n           \r\n            \"applyTo\": null,\r\n            \"status\": null,\r\n            \"containerReferences\": [\r\n                {\r\n                    \"reference\": \"HP000004\",\r\n                    \"grossWeight\": 2500,\r\n                    \"packagesNumber\": 2500\r\n                }\r\n            ],\r\n            \"packageCode\": \"1A\",\r\n            \"packagesNumber\": 2500,\r\n            \"grossWeight\": 2500,\r\n            \"goodsDescription\": \"rice\",\r\n            \"remainingGrossWeight\": 2500,\r\n            \"remainingPackages\": 2500,\r\n            \"createdDate\": null,\r\n            \"sequence\": 2\r\n        }\r\n    ],\r\n    \"consolidateCargo\": false,\r\n    \"houseBills\": [],\r\n    \"carrier\": \"44440001\",\r\n    \"issuedDate\": \"2024-10-03T10:34:26.016857Z\",\r\n    \"pcIndicator\": \"CC\",\r\n    \"waybillReqActions\": null,\r\n    \"createDate\": \"2024-10-03T10:30:33.594177Z\",\r\n    \"updateDate\": \"2024-10-03T10:34:26.064146Z\",\r\n    \"requestType\": \"SUBMISSION\",\r\n    \"additionalInformation\": null,\r\n    \"firstLevel\": false,\r\n    \"inquiries\": null,\r\n    \"level\": 2,\r\n    \"notifyCode\": \"90184561\",\r\n    \"notifyName\": \"Atlas World Logistics\",\r\n    \"arrivalDate\": \"2024-10-02T17:00:00Z\",\r\n    \"carrierName\": \"Da Hua\",\r\n    \"voyageNumber\": \"9257892\",\r\n    \"consigneeName\": \"Atlas World Logistics\",\r\n    \"consignorName\": \"Atlas World Logistics\",\r\n    \"departureDate\": \"2024-10-02T17:00:00Z\",\r\n    \"notifyAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\",\r\n    \"consigneeAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\",\r\n    \"consignorAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\",\r\n    \"customsOfficeCode\": \"MYKAB\",\r\n    \"departurePlaceCode\": \"SAJED\",\r\n    \"dischargePlaceCode\": \"GHABK\",\r\n    \"registrationNumber\": \"\",\r\n    \"transporterIdentity\": \"HN001\",\r\n    \"freightForwarderName\": \"Atlas World Logistics\",\r\n    \"freightForwarderAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\",\r\n    \"masterBillId\": \"{{wayBillsid}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{evn}}/api/gateway/v1/manifest/waybills",
+					"host": [
+						"{{evn}}"
+					],
+					"path": [
+						"api",
+						"gateway",
+						"v1",
+						"manifest",
+						"waybills"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateHBLSecond_MasterBiiDev",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//Random\r",
+							"function makeid(length) {\r",
+							"  var result           = '';\r",
+							"  var characters       = '0123456789';\r",
+							"  var charactersLength = characters.length;\r",
+							"  for ( var i = 0; i < length; i++ ) {\r",
+							"      result += characters.charAt(Math.floor(Math.random() * charactersLength));\r",
+							"  }\r",
+							"  return result;\r",
+							"}\r",
+							"\r",
+							"// var Hbill = \"HB\"+makeid(7);\r",
+							"// pm.environment.set(\"Hbill\", Hbill);\r",
+							"var Hbill1 = \"HB2025_\"+makeid(7);\r",
+							"pm.environment.set(\"Hbill1\", Hbill1);\r",
+							"const evn = pm.variables.get(\"evn\");\r",
+							"const realms = pm.variables.get(\"realms\");\r",
+							"pm.sendRequest({\r",
+							"      url: `${evn}/apps/keycloak/realms/${realms}/protocol/openid-connect/token`,\r",
+							"      method: 'POST',\r",
+							"       header: {\r",
+							"    'Content-Type': 'application/x-www-form-urlencoded',\r",
+							"  },\r",
+							"      body: {\r",
+							"          mode: 'urlencoded',\r",
+							"          urlencoded: [\r",
+							"            {key: \"grant_type\", value: \"password\"},\r",
+							"            {key: \"client_id\", value: \"BV_SWAGGER_UI\"},\r",
+							"            {key: \"username\", value: \"atlas.officer@yopmail.com\"},\r",
+							"            {key: \"password\", value: \"@Ttek1234\"},\r",
+							"        ]\r",
+							"      }\r",
+							"  }, \r",
+							"  function (err, response) {\r",
+							"    console.log(\"token\",response.json().access_token);\r",
+							"        pm.environment.set(\"tokenIMEX\", response.json().access_token);\r",
+							"  })"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var HouseBillid = pm.response.json();\r",
+							"console.log(\"test\", HouseBillid);\r",
+							"if (HouseBillid) {\r",
+							"    pm.environment.set(\"HouseBillid1\", HouseBillid.data.waybill.id);\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Responsestatus code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Response wayBillsid is not null\", function () {\r",
+							"    pm.expect(pm.environment.get(\"wayBillsid\")).to.not.be.null;\r",
+							"});\r",
+							"pm.test(\"Verify MasterBill Reference\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.waybill.masterReference).to.exist.and.to.equal(pm.environment.get(\"MasterBill\"));\r",
+							"});\r",
+							"pm.test(\"Verify HousebillBill Reference\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.waybill.reference).to.equal(pm.environment.get(\"Hbill1\"));\r",
+							"});\r",
+							"pm.test(\"Response contains expected fields (Housebill)\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.data.waybill).to.have.property('id');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenIMEX}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"status\": \"DRAFT\",\r\n    \"acquittanceStatus\": null,\r\n    \"typeCode\": \"HBL\",\r\n    \"natureCode\": \"23\",\r\n    \"reference\": \"{{Hbill1}}\",\r\n    \"masterReference\": \"{{MasterBill}}\",\r\n    \"uniqueCarrierReference\": null,\r\n    \"loadingPlaceCode\": \"SAJED\",\r\n    \"unloadingPlaceCode\": \"GHABK\",\r\n    \"destinationPlaceCode\": null,\r\n    \"consignor\": \"90184561\",\r\n    \"consignee\": \"90184561\",\r\n    \"freightForwarder\": \"90184561\",\r\n    \"creator\": \"90184561\",\r\n    \"createdBy\": \"85dc606f-a8e0-4a06-ad8e-e84bc612e991\",\r\n    \"packageCode\": \"1A\",\r\n    \"packagesNumber\": 5000,\r\n    \"loadedPackages\": 0,\r\n    \"grossWeight\": 5000,\r\n    \"volumeCBM\": 100,\r\n    \"shippingMarks\": \"HH\",\r\n    \"locationCode\": \"114466CCA\",\r\n    \"goodsDescription\": \"rice\",\r\n    \"remainingPackages\": 5000,\r\n    \"remainingGrossWeight\": 5000,\r\n    \"deconsolidatedBillsNumber\": 0,\r\n    \"totalContainersNumber\": 1,\r\n    \"currencyCode\": \"AFN\",\r\n    \"freightCurrencyCode\": \"AFN\",\r\n    \"insuranceCurrencyCode\": \"AFN\",\r\n    \"freightAmount\": 1000,\r\n    \"customsValue\": 1000,\r\n    \"insuranceValue\": 1000,\r\n    \"containers\": [\r\n        {\r\n\r\n            \"typeCode\": \"08GP\",\r\n            \"loadedCode\": \"1\",\r\n            \"packagesNumber\": 5000,\r\n            \"reference\": \"HP000004\",\r\n            \"sealingParty\": \"88\",\r\n            \"tareWeight\": 5000,\r\n            \"grossWeight\": 5000,\r\n            \"netWeight\": null,\r\n            \"netWeightUOMCode\": null,\r\n            \"hazardousGoodsCode\": null,\r\n            \"goodsStatusCode\": null,\r\n            \"goodsDescription\": null,\r\n            \"loadedPackages\": null,\r\n            \"seals\": [\r\n                \"5555\"\r\n            ],\r\n            \"hasValidReference\": false\r\n        }\r\n    ],\r\n    \"splits\": [\r\n        {\r\n           \r\n            \"applyTo\": null,\r\n            \"status\": null,\r\n            \"containerReferences\": [\r\n                {\r\n                    \"reference\": \"HP000004\",\r\n                    \"grossWeight\": 2500,\r\n                    \"packagesNumber\": 2500\r\n                }\r\n            ],\r\n            \"packageCode\": \"1A\",\r\n            \"packagesNumber\": 2500,\r\n            \"grossWeight\": 2500,\r\n            \"goodsDescription\": \"rice\",\r\n            \"remainingGrossWeight\": 2500,\r\n            \"remainingPackages\": 2500,\r\n            \"createdDate\": null,\r\n            \"sequence\": 1\r\n        },\r\n        {\r\n           \r\n            \"applyTo\": null,\r\n            \"status\": null,\r\n            \"containerReferences\": [\r\n                {\r\n                    \"reference\": \"HP000004\",\r\n                    \"grossWeight\": 2500,\r\n                    \"packagesNumber\": 2500\r\n                }\r\n            ],\r\n            \"packageCode\": \"1A\",\r\n            \"packagesNumber\": 2500,\r\n            \"grossWeight\": 2500,\r\n            \"goodsDescription\": \"rice\",\r\n            \"remainingGrossWeight\": 2500,\r\n            \"remainingPackages\": 2500,\r\n            \"createdDate\": null,\r\n            \"sequence\": 2\r\n        }\r\n    ],\r\n    \"consolidateCargo\": false,\r\n    \"houseBills\": [],\r\n    \"carrier\": \"44440001\",\r\n    \"issuedDate\": \"2024-10-03T10:34:26.016857Z\",\r\n    \"pcIndicator\": \"CC\",\r\n    \"waybillReqActions\": null,\r\n    \"createDate\": \"2024-10-03T10:30:33.594177Z\",\r\n    \"updateDate\": \"2024-10-03T10:34:26.064146Z\",\r\n    \"requestType\": \"SUBMISSION\",\r\n    \"additionalInformation\": null,\r\n    \"firstLevel\": false,\r\n    \"inquiries\": null,\r\n    \"level\": 2,\r\n    \"notifyCode\": \"90184561\",\r\n    \"notifyName\": \"Atlas World Logistics\",\r\n    \"arrivalDate\": \"2024-10-02T17:00:00Z\",\r\n    \"carrierName\": \"Da Hua\",\r\n    \"voyageNumber\": \"9257892\",\r\n    \"consigneeName\": \"Atlas World Logistics\",\r\n    \"consignorName\": \"Atlas World Logistics\",\r\n    \"departureDate\": \"2024-10-02T17:00:00Z\",\r\n    \"notifyAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\",\r\n    \"consigneeAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\",\r\n    \"consignorAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\",\r\n    \"customsOfficeCode\": \"MYKAB\",\r\n    \"departurePlaceCode\": \"SAJED\",\r\n    \"dischargePlaceCode\": \"GHABK\",\r\n    \"registrationNumber\": \"\",\r\n    \"transporterIdentity\": \"HN001\",\r\n    \"freightForwarderName\": \"Atlas World Logistics\",\r\n    \"freightForwarderAddress\": \"Jeddah 7777, Jeddah, 10101010, SA\",\r\n    \"masterBillId\": \"{{wayBillsid}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{evn}}/api/gateway/v1/manifest/waybills",
+					"host": [
+						"{{evn}}"
+					],
+					"path": [
+						"api",
+						"gateway",
+						"v1",
+						"manifest",
+						"waybills"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PublishHouseBillDev",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const evn = pm.variables.get(\"evn\");\r",
+							"const realms = pm.variables.get(\"realms\");\r",
+							"pm.sendRequest({\r",
+							"      url: `${evn}/apps/keycloak/realms/${realms}/protocol/openid-connect/token`,\r",
+							"      method: 'POST',\r",
+							"       header: {\r",
+							"    'Content-Type': 'application/x-www-form-urlencoded',\r",
+							"  },\r",
+							"      body: {\r",
+							"          mode: 'urlencoded',\r",
+							"          urlencoded: [\r",
+							"            {key: \"grant_type\", value: \"password\"},\r",
+							"            {key: \"client_id\", value: \"BV_SWAGGER_UI\"},\r",
+							"            {key: \"username\", value: \"atlas.officer@yopmail.com\"},\r",
+							"            {key: \"password\", value: \"@Ttek1234\"},\r",
+							"        ]\r",
+							"      }\r",
+							"  }, \r",
+							"  function (err, response) {\r",
+							"    console.log(\"token\",response.json().access_token);\r",
+							"        pm.environment.set(\"tokenIMEX\", response.json().access_token);\r",
+							"  })"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"pm.test(\"Success field is true\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.success).to.equal(true);",
+							"});",
+							"",
+							"pm.test(\"Waybill and generalSegment are either null or have the expected structure\", function () {",
+							"    const responseData = pm.response.json();",
+							"",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    ",
+							"    // Check waybill",
+							"    pm.expect(responseData.data.waybill).to.satisfy(function(value) {",
+							"        return value === null || ",
+							"               (typeof value === 'object' && ",
+							"                value.hasOwnProperty('property1') && // replace with actual expected properties",
+							"                value.hasOwnProperty('property2')); // replace with actual expected properties",
+							"    }, \"waybill should be null or have the expected structure\");",
+							"    ",
+							"    // Check generalSegment",
+							"    pm.expect(responseData.data.generalSegment).to.satisfy(function(value) {",
+							"        return value === null || ",
+							"               (typeof value === 'object' && ",
+							"                value.hasOwnProperty('property1') && // replace with actual expected properties",
+							"                value.hasOwnProperty('property2')); // replace with actual expected properties",
+							"    }, \"generalSegment should be null or have the expected structure\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokenIMEX}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"masterBillId\":\"{{wayBillsid}}\",\"houseBillIds\":[\"{{HouseBillid}}\",\"{{HouseBillid1}}\"]}"
+				},
+				"url": {
+					"raw": "{{evn}}/api/gateway/v1/manifest/waybills/housebill/deconsolidated/publicize",
+					"host": [
+						"{{evn}}"
+					],
+					"path": [
+						"api",
+						"gateway",
+						"v1",
+						"manifest",
+						"waybills",
+						"housebill",
+						"deconsolidated",
+						"publicize"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SubmitManifestDev",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const evn = pm.variables.get(\"evn\");\r",
+							"const realms = pm.variables.get(\"realms\");\r",
+							"pm.sendRequest({\r",
+							"      url: `${evn}/apps/keycloak/realms/${realms}/protocol/openid-connect/token`,\r",
+							"      method: 'POST',\r",
+							"       header: {\r",
+							"    'Content-Type': 'application/x-www-form-urlencoded',\r",
+							"  },\r",
+							"      body: {\r",
+							"          mode: 'urlencoded',\r",
+							"          urlencoded: [\r",
+							"            {key: \"grant_type\", value: \"password\"},\r",
+							"            {key: \"client_id\", value: \"BV_SWAGGER_UI\"},\r",
+							"            {key: \"username\", value: \"da.hua.officer@yopmail.com\"},\r",
+							"            {key: \"password\", value: \"@Ttek1234\"},\r",
+							"        ]\r",
+							"      }\r",
+							"  }, \r",
+							"  function (err, response) {\r",
+							"    console.log(\"token\",response.json().access_token);\r",
+							"        pm.environment.set(\"tokencarrier\", response.json().access_token);\r",
+							"  })"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.eql(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Success field should be true\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.success).to.equal(true);",
+							"});",
+							"",
+							"",
+							"pm.test(\"The data object contains the required fields in generalSegment\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.have.property('data').that.is.an('object');",
+							"    pm.expect(responseData.data).to.have.property('generalSegment').that.is.an('object');",
+							"    ",
+							"    const generalSegment = responseData.data.generalSegment;",
+							"    pm.expect(generalSegment).to.have.all.keys(",
+							"        'id', 'status', 'acquittanceStatus', 'type', 'requestType', ",
+							"        'registrationNumber', 'customsOfficeCode', 'voyageNumber', ",
+							"        'departureDate', 'arrivalDate', 'arrivalTime', ",
+							"        'lastDischargeDate', 'submittedDate', 'departurePlaceCode', ",
+							"        'dischargePlaceCode', 'carrier', 'shippingAgent', ",
+							"        'transportModeCode', 'transporterIdentity', ",
+							"        'transporterNationalityCode', 'transporterPlaceCode', ",
+							"        'transporterRegistrationNumber', 'transporterRegistrationDate', ",
+							"        'masterInformation', 'tonnageNetWeight', 'tonnageGrossWeight', ",
+							"        'totalBillsNumber', 'totalDeconsolidatedBillsNumber', ",
+							"        'totalPackagesNumber', 'totalGrossWeight', ",
+							"        'createDate', 'updateDate', 'manifestReqActionResponses', ",
+							"        'reasons', 'rejectReasons', 'additionalInformation', ",
+							"        'applyTo', 'rejectionAdditionalInformation', ",
+							"        'carrierName', 'carrierAddress', 'shippingAgentName', ",
+							"        'shippingAgentAddress'",
+							"    );",
+							"});",
+							"",
+							"",
+							"pm.test(\"WayBills array is present and contains at least one element\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.data).to.have.property('wayBills').that.is.an('array').with.lengthOf.at.least(1, \"WayBills array should contain at least one element\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tokencarrier}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{evn}}/api/gateway/v1/manifest/manifests/{{Manifestid}}/submit",
+					"host": [
+						"{{evn}}"
+					],
+					"path": [
+						"api",
+						"gateway",
+						"v1",
+						"manifest",
+						"manifests",
+						"{{Manifestid}}",
+						"submit"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

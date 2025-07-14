@@ -86,7 +86,7 @@
 							"\r",
 							"const evn = pm.variables.get(\"evn\");\r",
 							"pm.sendRequest({\r",
-							"      url: `https://bv-${evn}.ttekglobal.com/apps/keycloak/realms/TTEK_STAGING/protocol/openid-connect/token`,\r",
+							"      url: `${evn}/apps/keycloak/realms/TTEK_STAGING/protocol/openid-connect/token`,\r",
 							"      method: 'POST',\r",
 							"       header: {\r",
 							"    'Content-Type': 'application/x-www-form-urlencoded',\r",
@@ -134,12 +134,9 @@
 					}
 				},
 				"url": {
-					"raw": "https://bv-core-dev.ttekglobal.com/api/gateway/v1/ediman/ext/edifact/cuscar",
-					"protocol": "https",
+					"raw": "{{evn}}/api/gateway/v1/ediman/ext/edifact/cuscar",
 					"host": [
-						"bv-core-dev",
-						"ttekglobal",
-						"com"
+						"{{evn}}"
 					],
 					"path": [
 						"api",
@@ -215,7 +212,29 @@
 							"\r",
 							"(async () => {\r",
 							"  await delay(3000); \r",
-							"})();"
+							"})();\r",
+							"\r",
+							"const evn = pm.variables.get(\"evn\");\r",
+							"pm.sendRequest({\r",
+							"      url: `${evn}/apps/keycloak/realms/TTEK_STAGING/protocol/openid-connect/token`,\r",
+							"      method: 'POST',\r",
+							"       header: {\r",
+							"    'Content-Type': 'application/x-www-form-urlencoded',\r",
+							"  },\r",
+							"      body: {\r",
+							"          mode: 'urlencoded',\r",
+							"          urlencoded: [\r",
+							"            {key: \"grant_type\", value: \"password\"},\r",
+							"            {key: \"client_id\", value: \"BV_SWAGGER_UI\"},\r",
+							"            {key: \"username\", value: \"da.hua.officer@yopmail.com\"},\r",
+							"            {key: \"password\", value: \"@Ttek1234\"},\r",
+							"        ]\r",
+							"      }\r",
+							"  }, \r",
+							"  function (err, response) {\r",
+							"    console.log(\"token\",response.json().access_token);\r",
+							"        pm.environment.set(\"tokencarrier\", response.json().access_token);\r",
+							"  });"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -236,12 +255,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://bv-core-dev.ttekglobal.com/api/gateway/v1/ediman/ext/edifact/messages/{{MessageID_EDI}}",
-					"protocol": "https",
+					"raw": "{{evn}}/api/gateway/v1/ediman/ext/edifact/messages/{{MessageID_EDI}}",
 					"host": [
-						"bv-core-dev",
-						"ttekglobal",
-						"com"
+						"{{evn}}"
 					],
 					"path": [
 						"api",
@@ -333,6 +349,28 @@
 							"pm.environment.set(\"MasterBill_IATA\", myJSON.MasterBill);\r",
 							"pm.environment.set(\"HBill_IATA\", myJSON.HBill);\r",
 							"\r",
+							"const evn = pm.variables.get(\"evn\");\r",
+							"pm.sendRequest({\r",
+							"      url: `${evn}/apps/keycloak/realms/TTEK_STAGING/protocol/openid-connect/token`,\r",
+							"      method: 'POST',\r",
+							"       header: {\r",
+							"    'Content-Type': 'application/x-www-form-urlencoded',\r",
+							"  },\r",
+							"      body: {\r",
+							"          mode: 'urlencoded',\r",
+							"          urlencoded: [\r",
+							"            {key: \"grant_type\", value: \"password\"},\r",
+							"            {key: \"client_id\", value: \"BV_SWAGGER_UI\"},\r",
+							"            {key: \"username\", value: \"da.hua.officer@yopmail.com\"},\r",
+							"            {key: \"password\", value: \"@Ttek1234\"},\r",
+							"        ]\r",
+							"      }\r",
+							"  }, \r",
+							"  function (err, response) {\r",
+							"    console.log(\"token\",response.json().access_token);\r",
+							"        pm.environment.set(\"tokencarrier\", response.json().access_token);\r",
+							"  });\r",
+							"\r",
 							"//TDT+20+{{VoyageNumber_IATA}}+1++COS:172:ZZZ:COSCO CONTAINER LINES+++VRMN9:103::COSCO SURABAYA:HK'"
 						],
 						"type": "text/javascript",
@@ -363,12 +401,9 @@
 					}
 				},
 				"url": {
-					"raw": "https://bv-core-dev.ttekglobal.com/api/gateway/v1/ediman/ext/edifact/cuscar",
-					"protocol": "https",
+					"raw": "{{evn}}/api/gateway/v1/ediman/ext/edifact/cuscar",
 					"host": [
-						"bv-core-dev",
-						"ttekglobal",
-						"com"
+						"{{evn}}"
 					],
 					"path": [
 						"api",
@@ -462,7 +497,7 @@
 						"exec": [
 							"const tokencarrier = pm.variables.get(\"tokencarrier\");\r",
 							"pm.sendRequest({\r",
-							"    url: 'https://bv-core-dev.ttekglobal.com/api/gateway/v1/ediman/ext/edifact/cuscar',  // Replace with actual URL\r",
+							"    url: `${evn}/api/gateway/v1/ediman/ext/edifact/cuscar`,  // Replace with actual URL\r",
 							"    method: 'POST',\r",
 							"    header: {\r",
 							"\r",
@@ -584,12 +619,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://bv-core-dev.ttekglobal.com/api/gateway/v1/ediman/ext/edifact/messages/{{MessageID_EDI}}",
-					"protocol": "https",
+					"raw": "{{evn}}/api/gateway/v1/ediman/ext/edifact/messages/{{MessageID_EDI}}",
 					"host": [
-						"bv-core-dev",
-						"ttekglobal",
-						"com"
+						"{{evn}}"
 					],
 					"path": [
 						"api",
@@ -684,7 +716,7 @@
 						"exec": [
 							"const tokencarrier = pm.variables.get(\"tokencarrier\");\r",
 							"pm.sendRequest({\r",
-							"    url: 'https://bv-core-dev.ttekglobal.com/api/gateway/v1/ediman/ext/edifact/cuscar',  // Replace with actual URL\r",
+							"    url: `${evn}/api/gateway/v1/ediman/ext/edifact/cuscar`,  // Replace with actual URL\r",
 							"    method: 'POST',\r",
 							"    header: {\r",
 							"\r",
@@ -906,7 +938,7 @@
 						"exec": [
 							"const tokencarrier = pm.variables.get(\"tokencarrier\");\r",
 							"pm.sendRequest({\r",
-							"    url: 'https://bv-core-dev.ttekglobal.com/api/gateway/v1/ediman/ext/edifact/cuscar',  // Replace with actual URL\r",
+							"    url: `${evn}/api/gateway/v1/ediman/ext/edifact/cuscar`,  // Replace with actual URL\r",
 							"    method: 'POST',\r",
 							"    header: {\r",
 							"\r",
@@ -1128,7 +1160,7 @@
 						"exec": [
 							"const tokencarrier = pm.variables.get(\"tokencarrier\");\r",
 							"pm.sendRequest({\r",
-							"    url: 'https://bv-core-dev.ttekglobal.com/api/gateway/v1/ediman/ext/edifact/cuscar',  // Replace with actual URL\r",
+							"    url: `${evn}/api/gateway/v1/ediman/ext/edifact/cuscar`,  // Replace with actual URL\r",
 							"    method: 'POST',\r",
 							"    header: {\r",
 							"\r",
